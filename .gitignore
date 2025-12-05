@@ -1,0 +1,7 @@
+# System
+.DS_Store
+Thumbs.db
+
+# Env example allowed, real env ignored in each project
+.env
+*.env.local
