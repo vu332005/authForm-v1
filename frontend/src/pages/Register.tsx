@@ -39,7 +39,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           placeholder="Password" 
           onChange={e => setPassword(e.target.value)} 
         />
-        <button className="w-full rounded bg-green-600 p-2 text-white hover:bg-green-700">Register</button>
+        <button className="w-full rounded bg-green-600 p-2 text-white hover:bg-green-700">Đăng ký</button>
         <p className="mt-4 text-center text-sm">
           Đã có tài khoản? <Link to="/login" className="text-blue-500">Đăng nhập</Link>
         </p>
