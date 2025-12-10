@@ -34,8 +34,10 @@ axiosClient.interceptors.response.use(
     // -> ta lấy req để khi refresh đc token -> có thể tự retry lại req
     const originalRequest = error.config;
     
-    // Nếu lỗi 403 - và chưa retry lần nào
-    if (error.response?.status === 403 && !originalRequest._retry) {
+    // Nếu lỗi 401 - và chưa retry lần nào
+    // -> chỉ dùng 401 - unauthorized vì khi đó là nó kh bt mình là ai hoặc accesstoken hết hạn -> thế mới rần refresh
+    // -> 403 là forbidden -> ví dụ mình là user nhưng truy cấp vào admin -> sẽ nhận 403 -> dù có lấy acctoken mới thì vẫn kh đủ quyền
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/refresh')) {
       originalRequest._retry = true;
       try {
         // Gọi API lấy token mới
@@ -48,11 +50,15 @@ axiosClient.interceptors.response.use(
         // Gọi lại request cũ
         return axiosClient(originalRequest); 
 
-      } catch (err) {
-        localStorage.removeItem('accessToken');
-        window.location.href = '/login'; // k cứu dc
+      }catch (err) {
+      // Nếu refresh token hết hạn hoặc không có → redirect login
+      localStorage.removeItem('accessToken');
+      
+      // Check nếu đã ở /login thì không reload
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
       }
-    }
+    }}
     return Promise.reject(error);
   }
 );
